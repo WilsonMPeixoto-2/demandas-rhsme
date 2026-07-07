@@ -374,131 +374,186 @@ export const App: React.FC = () => {
   // Renderização condicional: Tela de Login ou Área de Dashboard
   if (!userEmail) {
     return (
-      <div className="login-bg">
-        <div className="login-card">
-          <div className="login-header">
-            <h2>Controle de Demandas</h2>
-            <p>RH — Secretaria Municipal de Educação</p>
-          </div>
-          
-          <div className="login-tabs">
-            <button 
-              type="button" 
-              className={`login-tab-btn ${loginTab === 'login' ? 'active' : ''}`}
-              onClick={() => setLoginTab('login')}
-            >
-              Entrar
-            </button>
-            <button 
-              type="button" 
-              className={`login-tab-btn ${loginTab === 'cadastro' ? 'active' : ''}`}
-              onClick={() => setLoginTab('cadastro')}
-            >
-              Primeiro Acesso
-            </button>
-          </div>
-
-          {loginTab === 'login' ? (
-            /* Formulário de Login */
-            <form onSubmit={handleLoginSubmit}>
-              <div className="login-form-group">
-                <label>E-mail Corporativo</label>
-                <div className="input-icon-group">
-                  <i className="fa-solid fa-envelope"></i>
-                  <input 
-                    type="email" 
-                    className="form-control" 
-                    placeholder="usuario@rioeduca.net"
-                    value={loginEmail}
-                    onChange={e => setLoginEmail(e.target.value)}
-                    required 
-                  />
+      <div className="login-split-container">
+        {/* Lado Esquerdo: Painel Azul/Slate Corporativo */}
+        <div className="login-sidebar">
+          <div className="login-sidebar-content">
+            <span className="sidebar-badge">RH • SME</span>
+            <h2>Central de Demandas</h2>
+            <p className="sidebar-description">
+              Organização, acompanhamento e rastreabilidade das demandas de Recursos Humanos.
+            </p>
+            
+            <div className="sidebar-features">
+              <div className="feature-item">
+                <div className="feature-icon-wrapper">
+                  <i className="fa-solid fa-calendar-check"></i>
                 </div>
-              </div>
-              <div className="login-form-group" style={{ marginBottom: '25px' }}>
-                <label>Senha</label>
-                <div className="input-icon-group">
-                  <i className="fa-solid fa-lock"></i>
-                  <input 
-                    type="password" 
-                    className="form-control" 
-                    placeholder="••••••••"
-                    value={loginSenha}
-                    onChange={e => setLoginSenha(e.target.value)}
-                    required 
-                  />
+                <div className="feature-text">
+                  <strong>Prazos</strong>
+                  <span>Alertas visuais e semânticos sobre datas limites e providências em atraso.</span>
                 </div>
-              </div>
-              <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '10px' }}>
-                Acessar Sistema
-              </button>
-            </form>
-          ) : (
-            /* Formulário de Primeiro Acesso (Solicitação) */
-            <form onSubmit={handleCadastroSubmit}>
-              <div className="login-form-group">
-                <label>Seu E-mail Corporativo</label>
-                <div className="input-icon-group">
-                  <i className="fa-solid fa-envelope"></i>
-                  <input 
-                    type="email" 
-                    className="form-control" 
-                    placeholder="nome@rioeduca.net"
-                    value={cadEmail}
-                    onChange={e => setCadEmail(e.target.value)}
-                    required 
-                  />
-                </div>
-                {erroEmail && (
-                  <div className="text-danger">Apenas e-mails do domínio @rioeduca.net são aceitos.</div>
-                )}
               </div>
               
-              <div className="login-form-group" style={{ marginBottom: '20px' }}>
-                <label>Criar Nova Senha</label>
-                <div className="input-icon-group">
-                  <i className="fa-solid fa-lock"></i>
-                  <input 
-                    type="password" 
-                    className="form-control" 
-                    placeholder="••••••••"
-                    value={cadSenha}
-                    onChange={e => setCadSenha(e.target.value)}
-                    required 
-                  />
+              <div className="feature-item">
+                <div className="feature-icon-wrapper">
+                  <i className="fa-solid fa-user-check"></i>
                 </div>
-                
-                {/* Visualização de critérios de Senha Forte */}
-                <div className="password-requirements">
-                  <div className={`req-item ${senhaValida.minimo ? 'valid' : ''}`}>
-                    <i className={senhaValida.minimo ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-xmark'}></i>
-                    <span>Mínimo de 8 caracteres</span>
-                  </div>
-                  <div className={`req-item ${senhaValida.maiuscula ? 'valid' : ''}`}>
-                    <i className={senhaValida.maiuscula ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-xmark'}></i>
-                    <span>Pelo menos uma letra maiúscula</span>
-                  </div>
-                  <div className={`req-item ${senhaValida.minuscula ? 'valid' : ''}`}>
-                    <i className={senhaValida.minuscula ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-xmark'}></i>
-                    <span>Pelo menos uma letra minúscula</span>
-                  </div>
-                  <div className={`req-item ${senhaValida.numero ? 'valid' : ''}`}>
-                    <i className={senhaValida.numero ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-xmark'}></i>
-                    <span>Pelo menos um número</span>
-                  </div>
+                <div className="feature-text">
+                  <strong>Responsáveis</strong>
+                  <span>Atribuição clara de tarefas com suporte a avatares e vinculação por setores.</span>
                 </div>
               </div>
+              
+              <div className="feature-item">
+                <div className="feature-icon-wrapper">
+                  <i className="fa-solid fa-clock-rotate-left"></i>
+                </div>
+                <div className="feature-text">
+                  <strong>Histórico</strong>
+                  <span>Rastreabilidade completa de logs e comentários de status por processo.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Padrão geométrico decorativo em segundo plano */}
+          <div className="sidebar-pattern"></div>
+        </div>
 
+        {/* Lado Direito: Card de Autenticação */}
+        <div className="login-form-area">
+          <div className="login-card-editorial">
+            {/* Cabeçalho de Login Móvel (Aparece apenas em Mobile) */}
+            <div className="login-mobile-brand">
+              <h2>Central de Demandas</h2>
+              <p>RH — Secretaria Municipal de Educação</p>
+            </div>
+
+            <div className="login-card-header">
+              <h3>Painel de Acesso</h3>
+              <p>Identifique-se com a sua credencial @rioeduca.net</p>
+            </div>
+
+            <div className="login-tabs">
               <button 
-                type="submit" 
-                className="btn btn-primary" 
-                style={{ width: '100%', padding: '10px' }}
-                disabled={!(cadEmail.toLowerCase().endsWith('@rioeduca.net') && senhaValida.minimo && senhaValida.maiuscula && senhaValida.minuscula && senhaValida.numero)}
+                type="button" 
+                className={`login-tab-btn ${loginTab === 'login' ? 'active' : ''}`}
+                onClick={() => setLoginTab('login')}
               >
-                Solicitar Aprovação
+                Entrar
               </button>
-            </form>
-          )}
+              <button 
+                type="button" 
+                className={`login-tab-btn ${loginTab === 'cadastro' ? 'active' : ''}`}
+                onClick={() => setLoginTab('cadastro')}
+              >
+                Primeiro Acesso
+              </button>
+            </div>
+
+            {loginTab === 'login' ? (
+              /* Formulário de Login */
+              <form onSubmit={handleLoginSubmit}>
+                <div className="login-form-group">
+                  <label>E-mail Corporativo</label>
+                  <div className="input-icon-group">
+                    <i className="fa-solid fa-envelope"></i>
+                    <input 
+                      type="email" 
+                      className="form-control" 
+                      placeholder="usuario@rioeduca.net"
+                      value={loginEmail}
+                      onChange={e => setLoginEmail(e.target.value)}
+                      required 
+                    />
+                  </div>
+                </div>
+                <div className="login-form-group" style={{ marginBottom: '25px' }}>
+                  <label>Senha</label>
+                  <div className="input-icon-group">
+                    <i className="fa-solid fa-lock"></i>
+                    <input 
+                      type="password" 
+                      className="form-control" 
+                      placeholder="••••••••"
+                      value={loginSenha}
+                      onChange={e => setLoginSenha(e.target.value)}
+                      required 
+                    />
+                  </div>
+                </div>
+                <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '12px', fontWeight: '600' }}>
+                  Acessar Sistema
+                </button>
+              </form>
+            ) : (
+              /* Formulário de Primeiro Acesso (Solicitação) */
+              <form onSubmit={handleCadastroSubmit}>
+                <div className="login-form-group">
+                  <label>Seu E-mail Corporativo</label>
+                  <div className="input-icon-group">
+                    <i className="fa-solid fa-envelope"></i>
+                    <input 
+                      type="email" 
+                      className="form-control" 
+                      placeholder="nome@rioeduca.net"
+                      value={cadEmail}
+                      onChange={e => setCadEmail(e.target.value)}
+                      required 
+                    />
+                  </div>
+                  {erroEmail && (
+                    <div className="text-danger">Apenas e-mails do domínio @rioeduca.net são aceitos.</div>
+                  )}
+                </div>
+                
+                <div className="login-form-group" style={{ marginBottom: '20px' }}>
+                  <label>Criar Nova Senha</label>
+                  <div className="input-icon-group">
+                    <i className="fa-solid fa-lock"></i>
+                    <input 
+                      type="password" 
+                      className="form-control" 
+                      placeholder="••••••••"
+                      value={cadSenha}
+                      onChange={e => setCadSenha(e.target.value)}
+                      required 
+                    />
+                  </div>
+                  
+                  {/* Visualização de critérios de Senha Forte */}
+                  <div className="password-requirements">
+                    <div className={`req-item ${senhaValida.minimo ? 'valid' : ''}`}>
+                      <i className={senhaValida.minimo ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-xmark'}></i>
+                      <span>Mínimo de 8 caracteres</span>
+                    </div>
+                    <div className={`req-item ${senhaValida.maiuscula ? 'valid' : ''}`}>
+                      <i className={senhaValida.maiuscula ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-xmark'}></i>
+                      <span>Pelo menos uma letra maiúscula</span>
+                    </div>
+                    <div className={`req-item ${senhaValida.minuscula ? 'valid' : ''}`}>
+                      <i className={senhaValida.minuscula ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-xmark'}></i>
+                      <span>Pelo menos uma letra minúscula</span>
+                    </div>
+                    <div className={`req-item ${senhaValida.numero ? 'valid' : ''}`}>
+                      <i className={senhaValida.numero ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-xmark'}></i>
+                      <span>Pelo menos um número</span>
+                    </div>
+                  </div>
+                </div>
+
+                <button 
+                  type="submit" 
+                  className="btn btn-primary" 
+                  style={{ width: '100%', padding: '12px', fontWeight: '600' }}
+                  disabled={!(cadEmail.toLowerCase().endsWith('@rioeduca.net') && senhaValida.minimo && senhaValida.maiuscula && senhaValida.minuscula && senhaValida.numero)}
+                >
+                  Solicitar Aprovação
+                </button>
+              </form>
+            )}
+          </div>
         </div>
       </div>
     );
