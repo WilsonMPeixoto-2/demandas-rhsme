@@ -8,6 +8,7 @@ import { ModalNovo } from './components/ModalNovo';
 import { ModalEditar } from './components/ModalEditar';
 import { ModalStatus } from './components/ModalStatus';
 import { ModalHistorico } from './components/ModalHistorico';
+import { AtencaoImediata } from './components/AtencaoImediata';
 
 export const App: React.FC = () => {
   // --- Estados de Autenticação (Simulada para rapidez local) ---
@@ -510,6 +511,16 @@ export const App: React.FC = () => {
         userEmail={userEmail} 
         demandas={demandas} 
         onLogout={handleLogout} 
+      />
+
+      {/* Faixa de Atenção Imediata */}
+      <AtencaoImediata 
+        demandas={demandas}
+        historico={historico}
+        onOpenEditar={(d) => {
+          setDemandaSelecionada(d);
+          setModalEditarAberto(true);
+        }}
       />
 
       {/* Painel de Filtros e Busca */}

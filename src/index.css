@@ -818,3 +818,142 @@ h1, h2, h3, h4 {
   from { transform: scale(0.97); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
+
+/* ==========================================================================
+   PAINEL DE ATENÇÃO IMEDIATA (ATENÇÃO AGORA)
+   ========================================================================== */
+.atencao-secao {
+  margin-top: 5px;
+  margin-bottom: 30px;
+  animation: fadeIn var(--transition-normal) forwards;
+}
+
+.atencao-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.atencao-header i.text-warning-icon {
+  color: #f59e0b;
+  font-size: 0.813rem;
+  animation: pulse-icon 2s infinite ease-in-out;
+}
+
+.atencao-header h2 {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--primary-color);
+}
+
+.atencao-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.atencao-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.atencao-card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Bordas de destaque laterais e gradientes suaves para os cards de atenção */
+.atencao-card.card-vencido {
+  border-left: 3px solid #ef4444;
+  background: linear-gradient(90deg, rgba(239, 68, 68, 0.008) 0%, rgba(255, 255, 255, 0) 100%);
+}
+.atencao-card.card-vencido .atencao-badge-title {
+  color: #ef4444;
+}
+
+.atencao-card.card-hoje {
+  border-left: 3px solid #f59e0b;
+  background: linear-gradient(90deg, rgba(245, 158, 11, 0.008) 0%, rgba(255, 255, 255, 0) 100%);
+}
+.atencao-card.card-hoje .atencao-badge-title {
+  color: #d97706;
+}
+
+.atencao-card.card-assinatura {
+  border-left: 3px solid #10b981;
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.008) 0%, rgba(255, 255, 255, 0) 100%);
+}
+.atencao-card.card-assinatura .atencao-badge-title {
+  color: #059669;
+}
+
+.atencao-badge-title {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.atencao-processo-num {
+  font-size: 0.813rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 4px;
+}
+
+.atencao-processo-assunto {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.btn-atencao-action {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--accent-color);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color var(--transition-normal);
+  margin-top: auto;
+}
+
+.btn-atencao-action:hover {
+  color: var(--accent-hover);
+}
+
+.btn-atencao-action i {
+  font-size: 0.75rem;
+  transition: transform var(--transition-normal);
+}
+
+.btn-atencao-action:hover i {
+  transform: translateX(3px);
+}
+
+@keyframes pulse-icon {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
