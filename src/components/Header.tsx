@@ -58,45 +58,33 @@ export const Header: React.FC<HeaderProps> = ({ userEmail, demandas, onLogout })
         </div>
       </div>
 
-      {/* Cards de Indicadores */}
+      {/* Cards de Indicadores (Estilo Editorial com Frisos Coloridos) */}
       <div className="stats-grid">
-        <div className="stat-card">
+        <div className="stat-card total-card">
           <div className="stat-info">
             <h3>Demandas Ativas</h3>
             <div className="stat-number">{totalAtivos}</div>
           </div>
-          <div className="stat-icon total">
-            <i className="fa-solid fa-folder-open"></i>
-          </div>
         </div>
 
-        <div className="stat-card">
+        <div className="stat-card assinatura-card">
           <div className="stat-info">
             <h3>Para Assinatura</h3>
             <div className="stat-number">{totalAssinatura}</div>
           </div>
-          <div className="stat-icon assinatura">
-            <i className="fa-solid fa-file-signature"></i>
-          </div>
         </div>
 
-        <div className="stat-card">
+        <div className="stat-card hoje-card">
           <div className="stat-info">
             <h3>Vencendo Hoje</h3>
             <div className="stat-number">{totalHoje}</div>
           </div>
-          <div className="stat-icon hoje">
-            <i className="fa-solid fa-clock-rotate-left"></i>
-          </div>
         </div>
 
-        <div className="stat-card">
+        <div className="stat-card vencido-card">
           <div className="stat-info">
             <h3>Vencidas</h3>
             <div className="stat-number">{totalVencidos}</div>
-          </div>
-          <div className="stat-icon vencido">
-            <i className="fa-solid fa-triangle-exclamation"></i>
           </div>
         </div>
       </div>
