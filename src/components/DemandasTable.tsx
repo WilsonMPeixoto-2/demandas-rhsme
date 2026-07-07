@@ -37,49 +37,10 @@ export const DemandasTable: React.FC<DemandasTableProps> = ({
     };
   }, []);
 
-  const getTodayString = () => {
-    const today = new Date();
-    const dd = String(today.getDate()).padStart(2, '0');
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const yyyy = today.getFullYear();
-    return `${dd}/${mm}/${yyyy}`;
-  };
 
-  const todayStr = getTodayString();
-
-  const isToday = (dateStr: string) => {
-    if (!dateStr || dateStr === 'dd/mm/aaaa') return false;
-    return dateStr === todayStr;
-  };
-
-  const isBeforeToday = (dateStr: string) => {
-    if (!dateStr || dateStr === 'dd/mm/aaaa') return false;
-    const [day, month, year] = dateStr.split('/').map(Number);
-    const dateObj = new Date(year, month - 1, day);
-    
-    const today = new Date();
-    const todayObj = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    
-    return dateObj < todayObj;
-  };
 
   // Retorna a classe da linha baseada no status e data limite
-  const getRowClass = (d: Demanda) => {
-    if (d.status === 'Encerrado') return '';
-
-    if (d.status === 'Para Assinatura') {
-      return 'row-assinatura';
-    }
-
-    if (d.limite2) {
-      if (isToday(d.limite2)) {
-        return 'row-hoje';
-      }
-      if (isBeforeToday(d.limite2)) {
-        return 'row-vencido';
-      }
-    }
-
+  const getRowClass = () => {
     return '';
   };
 
@@ -182,7 +143,7 @@ export const DemandasTable: React.FC<DemandasTableProps> = ({
                 const showAvatar = initials !== '—';
 
                 return (
-                  <tr key={d.id} className={getRowClass(d)}>
+                  <tr key={d.id} className={getRowClass()}>
                     {/* Processo / Documento (Número, Tipo e Classificação consolidados) */}
                     <td style={{ textAlign: 'left' }}>
                       <div className="processo-identificacao">

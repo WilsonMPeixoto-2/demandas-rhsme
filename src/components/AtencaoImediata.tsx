@@ -189,35 +189,36 @@ export const AtencaoImediata: React.FC<AtencaoImediataProps> = ({
   return (
     <div className="atencao-secao">
       <div className="atencao-header">
-        <i className="fa-solid fa-bolt-lightning text-warning-icon"></i>
+        <i className="fa-solid fa-circle-exclamation" style={{ color: 'var(--primary-color)', fontSize: '0.875rem' }}></i>
         <h2>Atenção agora</h2>
       </div>
       
-      <div className="atencao-grid">
+      <div className="atencao-painel-unico">
         {itensCriticos.map((item, idx) => (
           <div 
             key={`${item.tipo}-${item.demanda.id}-${idx}`} 
-            className={`atencao-card card-${item.tipo}`}
+            className="atencao-linha-alerta"
           >
-            <div className="atencao-badge-title">
-              {item.tituloAlerta}
-            </div>
-            
-            <div className="atencao-processo-num">
-              {item.demanda.numero}
-            </div>
-            
-            <div className="atencao-processo-assunto" title={item.demanda.assunto}>
-              {item.demanda.assunto}
+            <div className="alerta-info-grupo">
+              <span className={`alerta-prazo-tag ${item.tipo}`}>
+                {item.tituloAlerta}
+              </span>
+              <div className="alerta-detalhe">
+                <span className="alerta-numero">{item.demanda.numero}</span>
+                <span className="alerta-assunto" title={item.demanda.assunto}>
+                  {item.demanda.assunto}
+                </span>
+              </div>
             </div>
             
             <button 
               type="button" 
-              className="btn btn-atencao-action"
+              className="btn-alerta-abrir"
               onClick={() => onOpenEditar(item.demanda)}
+              title={`Abrir detalhes do processo ${item.demanda.numero}`}
             >
-              <span>Abrir demanda</span>
-              <i className="fa-solid fa-arrow-right-long"></i>
+              <span>Abrir</span>
+              <i className="fa-solid fa-arrow-right-long" style={{ fontSize: '0.75rem' }}></i>
             </button>
           </div>
         ))}
