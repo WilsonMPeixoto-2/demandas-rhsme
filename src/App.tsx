@@ -72,7 +72,13 @@ export const App: React.FC = () => {
     // Carregar demandas de LocalStorage ou usar inicial da planilha demandas.xlsx
     const storedDemandas = localStorage.getItem('demandas_data');
     if (storedDemandas) {
-      setDemandas(JSON.parse(storedDemandas));
+      const parsed = JSON.parse(storedDemandas);
+      if (parsed.length < 20) {
+        setDemandas(initialDemandas);
+        localStorage.setItem('demandas_data', JSON.stringify(initialDemandas));
+      } else {
+        setDemandas(parsed);
+      }
     } else {
       setDemandas(initialDemandas);
       localStorage.setItem('demandas_data', JSON.stringify(initialDemandas));
@@ -81,9 +87,23 @@ export const App: React.FC = () => {
     // Carregar histórico de LocalStorage ou criar histórico inicial vazio
     const storedHistorico = localStorage.getItem('demandas_history');
     if (storedHistorico) {
-      setHistorico(JSON.parse(storedHistorico));
+      const parsedHist = JSON.parse(storedHistorico);
+      if (parsedHist.length < 20) {
+        const hojeStr = new Date().toLocaleString('pt-BR');
+        const mockHistorico: ComentarioHistorico[] = initialDemandas.map(d => ({
+          id: d.id,
+          demandaId: d.id,
+          data_hora: hojeStr,
+          status_novo: d.status,
+          setor: d.setor || 'SME',
+          comentario: 'Demanda importada da planilha inicial.'
+        }));
+        setHistorico(mockHistorico);
+        localStorage.setItem('demandas_history', JSON.stringify(mockHistorico));
+      } else {
+        setHistorico(parsedHist);
+      }
     } else {
-      // Cria registros de histórico iniciais de mentirinha para ilustrar o visual
       const hojeStr = new Date().toLocaleString('pt-BR');
       const mockHistorico: ComentarioHistorico[] = initialDemandas.map(d => ({
         id: d.id,
