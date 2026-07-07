@@ -9,6 +9,8 @@ import { ModalEditar } from './components/ModalEditar';
 import { ModalStatus } from './components/ModalStatus';
 import { ModalHistorico } from './components/ModalHistorico';
 import { AtencaoImediata } from './components/AtencaoImediata';
+import { VisaoGeral } from './components/VisaoGeral';
+import { AdminPanel } from './components/AdminPanel';
 
 export const App: React.FC = () => {
   // --- Estados de Autenticação (Simulada para rapidez local) ---
@@ -47,6 +49,10 @@ export const App: React.FC = () => {
     hoje: false,
     vencido: false
   });
+
+  // --- Estados de Roteamento SPA ---
+  const [activeTab, setActiveTab] = useState<'visao-geral' | 'demandas' | 'admin'>('visao-geral');
+  const [drawerAberto, setDrawerAberto] = useState<boolean>(false);
 
   // --- Estados dos Modais ---
   const [modalNovoAberto, setModalNovoAberto] = useState<boolean>(false);
@@ -271,6 +277,50 @@ export const App: React.FC = () => {
     const todayObj = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     
     return dateObj < todayObj;
+  };
+
+  // Calcula rótulos semânticos de prazo final
+  const getPrazoFinalSemantics = (dateStr: string | undefined) => {
+    if (!dateStr || dateStr === 'dd/mm/aaaa') {
+      return { data: '—', label: null, classe: '' };
+    }
+
+    try {
+      const [day, month, year] = dateStr.split('/').map(Number);
+      const dateObj = new Date(year, month - 1, day);
+      
+      const meses = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+      const dataFormatada = `${String(day).padStart(2, '0')} ${meses[month - 1]} ${year}`;
+
+      const today = new Date();
+      const todayObj = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+      const diffTime = dateObj.getTime() - todayObj.getTime();
+      const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays < 0) {
+        const absDays = Math.abs(diffDays);
+        return {
+          data: dataFormatada,
+          label: `${absDays} ${absDays === 1 ? 'dia' : 'dias'} em atraso`,
+          classe: 'status-atrasado'
+        };
+      } else if (diffDays === 0) {
+        return {
+          data: dataFormatada,
+          label: 'vence hoje',
+          classe: 'status-hoje'
+        };
+      } else {
+        return {
+          data: dataFormatada,
+          label: `em ${diffDays} ${diffDays === 1 ? 'dia' : 'dias'}`,
+          classe: 'status-no-prazo'
+        };
+      }
+    } catch {
+      return { data: dateStr, label: null, classe: '' };
+    }
   };
 
   // Lógica de filtragem dos dados
@@ -575,6 +625,7 @@ export const App: React.FC = () => {
         onToggleFiltroStatus={(novoStatus) => {
           setFiltros(prev => ({ ...prev, status: novoStatus }));
           setQuickFilters({ assinatura: false, hoje: false, vencido: false });
+          setActiveTab('demandas'); // Direciona para a página de Demandas
         }}
         onToggleQuickFilter={(filtro) => {
           setQuickFilters(prev => {
@@ -584,49 +635,113 @@ export const App: React.FC = () => {
               [filtro]: novoVal
             };
           });
+          setActiveTab('demandas'); // Direciona para a página de Demandas
         }}
       />
 
-      {/* Faixa de Atenção Imediata */}
-      <AtencaoImediata 
-        demandas={demandas}
-        historico={historico}
-        onOpenEditar={(d) => {
-          setDemandaSelecionada(d);
-          setModalEditarAberto(true);
-        }}
-      />
+      {/* Navegação por Abas SPA */}
+      <nav className="nav-tabs">
+        <button 
+          type="button" 
+          className={`nav-tab-link ${activeTab === 'visao-geral' ? 'active' : ''}`}
+          onClick={() => setActiveTab('visao-geral')}
+          title="Ver o resumo e indicadores do CTRH"
+        >
+          <i className="fa-solid fa-chart-pie"></i>
+          <span>Visão geral</span>
+        </button>
+        
+        <button 
+          type="button" 
+          className={`nav-tab-link ${activeTab === 'demandas' ? 'active' : ''}`}
+          onClick={() => setActiveTab('demandas')}
+          title="Ver a listagem e pesquisar processos operacionais"
+        >
+          <i className="fa-solid fa-list-check"></i>
+          <span>Demandas</span>
+        </button>
 
-      {/* Painel de Filtros e Busca */}
-      <FilterPanel 
-        filtros={filtros} 
-        setFiltros={setFiltros} 
-        quickFilters={quickFilters}
-        setQuickFilters={setQuickFilters}
-        setoresDisponiveis={setoresDisponiveis}
-        totalExibidos={demandasFiltradas.length}
-        totalGeral={demandas.length}
-      />
+        <button 
+          type="button" 
+          className={`nav-tab-link ${activeTab === 'admin' ? 'active' : ''}`}
+          onClick={() => setActiveTab('admin')}
+          title="Ver e gerenciar configurações e perfis de servidores"
+        >
+          <i className="fa-solid fa-sliders"></i>
+          <span>Administração</span>
+        </button>
+      </nav>
 
-      {/* Tabela de Demandas */}
-      <DemandasTable 
-        demandas={demandasFiltradas}
-        onOpenEditar={(d) => {
-          setDemandaSelecionada(d);
-          setModalEditarAberto(true);
-        }}
-        onOpenStatus={(d) => {
-          setDemandaSelecionada(d);
-          setModalStatusAberto(true);
-        }}
-        onOpenHistorico={(d) => {
-          setDemandaSelecionada(d);
-          setModalHistoricoAberto(true);
-        }}
-        onExcluir={handleExcluirDemanda}
-      />
+      {/* Conteúdo Dinâmico Baseado na Aba Ativa */}
+      {activeTab === 'visao-geral' && (
+        <VisaoGeral 
+          demandas={demandas}
+          historico={historico}
+          onOpenEditar={(d) => {
+            setDemandaSelecionada(d);
+            setDrawerAberto(true);
+          }}
+          renderAtencaoImediata={() => (
+            <AtencaoImediata 
+              demandas={demandas}
+              historico={historico}
+              onOpenEditar={(d) => {
+                setDemandaSelecionada(d);
+                setDrawerAberto(true);
+              }}
+            />
+          )}
+        />
+      )}
 
-      {/* --- Modais --- */}
+      {activeTab === 'demandas' && (
+        <div style={{ animation: 'fadeIn 0.4s ease-out forwards' }}>
+          {/* Faixa de Atenção Imediata (Opcional, também visível na mesa de trabalho) */}
+          <AtencaoImediata 
+            demandas={demandas}
+            historico={historico}
+            onOpenEditar={(d) => {
+              setDemandaSelecionada(d);
+              setDrawerAberto(true);
+            }}
+          />
+
+          {/* Painel de Filtros e Busca */}
+          <FilterPanel 
+            filtros={filtros} 
+            setFiltros={setFiltros} 
+            quickFilters={quickFilters}
+            setQuickFilters={setQuickFilters}
+            setoresDisponiveis={setoresDisponiveis}
+            totalExibidos={demandasFiltradas.length}
+            totalGeral={demandas.length}
+          />
+
+          {/* Tabela de Demandas */}
+          <DemandasTable 
+            demandas={demandasFiltradas}
+            onOpenEditar={(d) => {
+              setDemandaSelecionada(d);
+              setDrawerAberto(true); // Clicar em Abrir/Número agora abre o Drawer lateral!
+            }}
+            onOpenStatus={(d) => {
+              setDemandaSelecionada(d);
+              setModalStatusAberto(true);
+            }}
+            onOpenHistorico={(d) => {
+              setDemandaSelecionada(d);
+              setModalHistoricoAberto(true);
+            }}
+            onExcluir={handleExcluirDemanda}
+          />
+        </div>
+      )}
+
+      {activeTab === 'admin' && (
+        <AdminPanel />
+      )}
+
+      {/* --- Modais Clássicos (Acionados a partir da Tabela ou do Drawer) --- */}
       
       {/* Modal Novo Registro */}
       {modalNovoAberto && (
@@ -642,9 +757,19 @@ export const App: React.FC = () => {
           demanda={demandaSelecionada}
           onClose={() => {
             setModalEditarAberto(false);
-            setDemandaSelecionada(null);
+            // Se o Drawer estava aberto, não zeramos o demandaSelecionada para mantê-lo ativo
+            if (!drawerAberto) {
+              setDemandaSelecionada(null);
+            }
           }}
-          onSalvar={handleSalvarEdicaoDemanda}
+          onSalvar={(id, campos) => {
+            handleSalvarEdicaoDemanda(id, campos);
+            setModalEditarAberto(false);
+            // Atualiza a referência de visualização se o Drawer de detalhe estiver aberto
+            if (drawerAberto) {
+              setDemandaSelecionada(prev => prev ? { ...prev, ...campos } : null);
+            }
+          }}
         />
       )}
 
@@ -654,9 +779,19 @@ export const App: React.FC = () => {
           demanda={demandaSelecionada}
           onClose={() => {
             setModalStatusAberto(false);
-            setDemandaSelecionada(null);
+            if (!drawerAberto) {
+              setDemandaSelecionada(null);
+            }
           }}
-          onAtualizar={handleAtualizarStatus}
+          onAtualizar={(id: number, status: Demanda['status'], coment: string) => {
+            handleAtualizarStatus(id, status, coment);
+            setModalStatusAberto(false);
+            // Atualiza a referência de visualização se o Drawer de detalhe estiver aberto
+            if (drawerAberto) {
+              const novaD = demandas.find(d => d.id === id);
+              setDemandaSelecionada(prev => prev ? { ...prev, status, setor: novaD?.setor || prev.setor } : null);
+            }
+          }}
         />
       )}
 
@@ -667,10 +802,174 @@ export const App: React.FC = () => {
           historico={historico}
           onClose={() => {
             setModalHistoricoAberto(false);
-            setDemandaSelecionada(null);
+            if (!drawerAberto) {
+              setDemandaSelecionada(null);
+            }
           }}
         />
       )}
+
+      {/* Drawer Lateral de Detalhe da Demanda */}
+      {drawerAberto && demandaSelecionada && (() => {
+        const prazoSemantics = getPrazoFinalSemantics(demandaSelecionada.limite2);
+        // Filtrar histórico dessa demanda
+        const histFiltrado = historico.filter(h => h.demandaId === demandaSelecionada.id);
+        
+        return (
+          <div className="drawer-overlay" onClick={() => { setDrawerAberto(false); setDemandaSelecionada(null); }}>
+            <div className="drawer-content" onClick={e => e.stopPropagation()}>
+              <div className="drawer-header">
+                <h2>Processo nº {demandaSelecionada.numero}</h2>
+                <button 
+                  type="button"
+                  className="btn-drawer-close" 
+                  onClick={() => { setDrawerAberto(false); setDemandaSelecionada(null); }}
+                  title="Fechar painel de detalhes"
+                >
+                  <i className="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+              
+              <div className="drawer-body">
+                {/* Seção 1: Identificação */}
+                <div className="drawer-section">
+                  <h3>Identificação</h3>
+                  <div className="drawer-meta-grid">
+                    <div className="drawer-meta-item full-width">
+                      <label>Assunto</label>
+                      <span className="value" style={{ fontWeight: 600, fontSize: '0.938rem' }}>{demandaSelecionada.assunto}</span>
+                    </div>
+                    <div className="drawer-meta-item">
+                      <label>Tipo</label>
+                      <span className="value">{demandaSelecionada.tipo}</span>
+                    </div>
+                    <div className="drawer-meta-item">
+                      <label>Classificação</label>
+                      <span className="value">{demandaSelecionada.classificacao || '—'}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Seção 2: Responsabilidade */}
+                <div className="drawer-section">
+                  <h3>Responsabilidade</h3>
+                  <div className="drawer-meta-grid">
+                    <div className="drawer-meta-item">
+                      <label>Responsável Atual</label>
+                      <span className="value" style={{ fontWeight: 600 }}>{demandaSelecionada.responsavel || 'Não atribuído'}</span>
+                    </div>
+                    <div className="drawer-meta-item">
+                      <label>Setor Vinculado</label>
+                      <span className="value">{demandaSelecionada.setor || '—'}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Seção 3: Prazos */}
+                <div className="drawer-section">
+                  <h3>Prazos</h3>
+                  <div className="drawer-meta-grid">
+                    <div className="drawer-meta-item">
+                      <label>Prazo de Análise (Interno)</label>
+                      <span className="value">{demandaSelecionada.limite1 || '—'}</span>
+                    </div>
+                    <div className="drawer-meta-item">
+                      <label>Prazo Final</label>
+                      <div className="prazo-final-container" style={{ alignItems: 'flex-start' }}>
+                        <span className="value" style={{ fontWeight: 600 }}>{prazoSemantics.data}</span>
+                        {prazoSemantics.label && demandaSelecionada.status !== 'Encerrado' && (
+                          <span className={`prazo-status-label ${prazoSemantics.classe}`} style={{ marginTop: '4px', display: 'inline-block' }}>
+                            {prazoSemantics.label}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Seção 4: Situação */}
+                <div className="drawer-section">
+                  <h3>Situação Atual</h3>
+                  <div className="drawer-meta-grid">
+                    <div className="drawer-meta-item">
+                      <label>Status</label>
+                      <span 
+                        className={`badge ${demandaSelecionada.status === 'Para Assinatura' ? 'assinatura' : demandaSelecionada.status === 'Encerrado' ? 'encerrado' : 'aguardando'}`} 
+                        style={{ marginTop: '4px', fontSize: '0.725rem', padding: '4px 10px', display: 'inline-block', width: 'fit-content' }}
+                      >
+                        {demandaSelecionada.status}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Seção 5: Histórico de Movimentações */}
+                <div className="drawer-section" style={{ borderBottom: 'none' }}>
+                  <h3>Histórico de Comentários</h3>
+                  {histFiltrado.length > 0 ? (
+                    <div className="timeline-container" style={{ paddingLeft: '20px', marginLeft: '0px' }}>
+                      {histFiltrado.map((h, idx) => {
+                        let statusBadgeClass = 'badge aguardando';
+                        if (h.status_novo === 'Para Assinatura') statusBadgeClass = 'badge assinatura';
+                        else if (h.status_novo === 'Encerrado') statusBadgeClass = 'badge encerrado';
+                        else if (h.status_novo === 'Tramitado') statusBadgeClass = 'badge tramitado';
+                        else if (h.status_novo === 'Ajustar') statusBadgeClass = 'badge ajustar';
+                        else if (h.status_novo === 'Sobrestado') statusBadgeClass = 'badge sobrestado';
+
+                        return (
+                          <div key={h.id} className={`timeline-item ${idx === 0 ? 'latest' : ''}`} style={{ marginBottom: '16px' }}>
+                            <div className="timeline-circle"></div>
+                            <div className="timeline-content" style={{ padding: '10px 14px' }}>
+                              <div className="timeline-header" style={{ marginBottom: '4px' }}>
+                                <span className="timeline-meta" style={{ fontSize: '0.7rem' }}>{h.data_hora}</span>
+                                <span className={statusBadgeClass} style={{ fontSize: '0.6rem', padding: '1px 6px' }}>{h.status_novo}</span>
+                              </div>
+                              <div style={{ fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-muted)' }}>{h.setor || 'CTRH'}</div>
+                              <div className="timeline-comment" style={{ fontSize: '0.75rem', marginTop: '4px' }}>{h.comentario}</div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <span style={{ fontSize: '0.813rem', color: 'var(--text-muted)' }}>Nenhum log registrado.</span>
+                  )}
+                </div>
+              </div>
+              
+              <div className="drawer-footer">
+                <button 
+                  type="button" 
+                  className="btn btn-secondary-outline"
+                  onClick={() => setModalStatusAberto(true)}
+                  title="Alterar status do processo"
+                >
+                  <i className="fa-solid fa-rotate-left"></i> Status
+                </button>
+                <button 
+                  type="button" 
+                  className="btn btn-secondary-outline"
+                  onClick={() => setModalEditarAberto(true)}
+                  title="Editar informações do processo"
+                >
+                  <i className="fa-solid fa-pen-to-square"></i> Editar
+                </button>
+                <button 
+                  type="button" 
+                  className="btn btn-primary"
+                  onClick={() => {
+                    setDrawerAberto(false);
+                    setDemandaSelecionada(null);
+                  }}
+                  title="Concluir leitura dos detalhes"
+                >
+                  <i className="fa-solid fa-check"></i> Fechar
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 };
