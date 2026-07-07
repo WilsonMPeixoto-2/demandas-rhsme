@@ -378,7 +378,7 @@ export const App: React.FC = () => {
         {/* Lado Esquerdo: Painel Azul/Slate Corporativo */}
         <div className="login-sidebar">
           <div className="login-sidebar-content">
-            <span className="sidebar-badge">RH • SME</span>
+            <span className="sidebar-badge">CTRH • SME</span>
             <h2>Central de Demandas</h2>
             <p className="sidebar-description">
               Organização, acompanhamento e rastreabilidade das demandas de Recursos Humanos.
@@ -427,7 +427,7 @@ export const App: React.FC = () => {
             {/* Cabeçalho de Login Móvel (Aparece apenas em Mobile) */}
             <div className="login-mobile-brand">
               <h2>Central de Demandas</h2>
-              <p>RH — Secretaria Municipal de Educação</p>
+              <p>CTRH — Secretaria Municipal de Educação</p>
             </div>
 
             <div className="login-card-header">

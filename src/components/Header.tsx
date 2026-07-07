@@ -64,7 +64,7 @@ export const Header: React.FC<HeaderProps> = ({
       {/* 1. Faixa Institucional Compacta (De ponta a ponta na janela) */}
       <div className="institucional-bar">
         <div className="inst-left">
-          <span className="inst-orgao">RH • Secretaria Municipal de Educação</span>
+          <span className="inst-orgao">CTRH • Secretaria Municipal de Educação</span>
           <span className="inst-separador">|</span>
           <span className="inst-sub">Sistema interno de acompanhamento</span>
         </div>
