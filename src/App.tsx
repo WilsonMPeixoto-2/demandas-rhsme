@@ -511,6 +511,8 @@ export const App: React.FC = () => {
         userEmail={userEmail} 
         demandas={demandas} 
         onLogout={handleLogout} 
+        onOpenNovo={() => setModalNovoAberto(true)}
+        onExportCSV={handleExportCSV}
       />
 
       {/* Faixa de Atenção Imediata */}
@@ -530,8 +532,6 @@ export const App: React.FC = () => {
         quickFilters={quickFilters}
         setQuickFilters={setQuickFilters}
         setoresDisponiveis={setoresDisponiveis}
-        onOpenNovo={() => setModalNovoAberto(true)}
-        onExportCSV={handleExportCSV}
       />
 
       {/* Tabela de Demandas */}

@@ -20,8 +20,6 @@ interface FilterPanelProps {
   quickFilters: QuickFiltersState;
   setQuickFilters: React.Dispatch<React.SetStateAction<QuickFiltersState>>;
   setoresDisponiveis: string[];
-  onOpenNovo: () => void;
-  onExportCSV: () => void;
 }
 
 export const FilterPanel: React.FC<FilterPanelProps> = ({
@@ -29,9 +27,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   setFiltros,
   quickFilters,
   setQuickFilters,
-  setoresDisponiveis,
-  onOpenNovo,
-  onExportCSV
+  setoresDisponiveis
 }) => {
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -83,16 +79,6 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
       {/* Linha superior: Ações e Botões de Atalhos rápidos */}
       <div className="filters-header">
         <div className="filters-quick-buttons">
-          <button className="btn btn-primary" onClick={onOpenNovo} title="Novo registro de demanda">
-            <i className="fa-solid fa-plus"></i> Novo Registro
-          </button>
-          <button className="btn" onClick={onExportCSV} title="Exportar dados para planilha CSV">
-            <i className="fa-solid fa-download"></i> Exportar CSV
-          </button>
-          
-          {/* Separador visual */}
-          <div style={{ width: '1px', height: '24px', backgroundColor: 'var(--border-color)', margin: '0 10px' }}></div>
-          
           {/* Botões rápidos cumulativos */}
           <button 
             type="button" 

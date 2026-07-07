@@ -1177,13 +1177,176 @@ h1, h2, h3, h4 {
   opacity: 0.6;
 }
 
-.dropdown-item.delete-item {
-  color: #ef4444;
-}
-
 .dropdown-item.delete-item:hover {
   background-color: rgba(239, 68, 68, 0.04);
   color: #dc2626;
 }
+
+/* ==========================================================================
+   NOVO CABEÇALHO INSTITUCIONAL (FAIXA DE TOPO E AÇÕES GLOBAIS)
+   ========================================================================== */
+
+/* Faixa de Topo Institucional de Ponta a Ponta */
+.institucional-bar {
+  margin: -40px -24px 35px -24px;
+  padding: 10px 24px;
+  background-color: #f8fafc; /* Slate 50 */
+  border-bottom: 1px solid #e2e8f0; /* Slate 200 */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.inst-left {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.inst-orgao {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  letter-spacing: -0.01em;
+}
+
+.inst-separador {
+  color: #cbd5e1;
+  margin: 0 10px;
+  font-size: 0.75rem;
+}
+
+.inst-sub {
+  font-size: 0.719rem;
+  color: #64748b; /* Slate 500 */
+  font-weight: 500;
+}
+
+.inst-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.inst-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.719rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.inst-meta-item i {
+  font-size: 0.813rem;
+  opacity: 0.8;
+}
+
+.inst-badge-ambiente {
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: #0284c7; /* Sky 700 */
+  background-color: #f0f9ff; /* Sky 50 */
+  border: 1px solid #bae6fd; /* Sky 200 */
+}
+
+.btn-logout-link {
+  background: none;
+  border: none;
+  font-family: var(--font-family);
+  font-size: 0.719rem;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: color var(--transition-normal);
+}
+
+.btn-logout-link:hover {
+  color: #ef4444; /* Vermelho hover */
+}
+
+/* Título Central e Ações Globais */
+.title-action-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 30px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.title-area {
+  flex: 1;
+  min-width: 280px;
+}
+
+.title-area h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+
+.header-subtitle {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+  font-weight: 400;
+}
+
+.header-global-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-nova-demanda-header {
+  background-color: var(--primary-color);
+  color: #ffffff;
+  border-color: var(--primary-color);
+  font-weight: 600;
+}
+
+.btn-nova-demanda-header:hover {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+.btn-secondary-outline {
+  background-color: #ffffff;
+  color: var(--text-muted);
+  border-color: var(--border-color);
+}
+
+.btn-secondary-outline:hover {
+  background-color: var(--border-light);
+  color: var(--primary-color);
+  border-color: #cbd5e1;
+}
+
+@media (max-width: 640px) {
+  .institucional-bar {
+    margin: -40px -24px 20px -24px;
+  }
+  .title-action-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .header-global-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
 
 

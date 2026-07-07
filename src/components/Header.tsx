@@ -1,18 +1,40 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Demanda } from '../types';
 
 interface HeaderProps {
   userEmail: string;
   demandas: Demanda[];
   onLogout: () => void;
+  onOpenNovo: () => void;
+  onExportCSV: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ userEmail, demandas, onLogout }) => {
+export const Header: React.FC<HeaderProps> = ({ 
+  userEmail, 
+  demandas, 
+  onLogout,
+  onOpenNovo,
+  onExportCSV
+}) => {
+  const [lastUpdate, setLastUpdate] = useState<string>('');
+
+  // Define o timestamp da última atualização (inicialização da sessão)
+  useEffect(() => {
+    const now = new Date();
+    const meses = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+    const dia = String(now.getDate()).padStart(2, '0');
+    const mes = meses[now.getMonth()];
+    const ano = now.getFullYear();
+    const horas = String(now.getHours()).padStart(2, '0');
+    const minutos = String(now.getMinutes()).padStart(2, '0');
+    setLastUpdate(`${dia} ${mes} ${ano}, ${horas}:${minutos}`);
+  }, [demandas]); // Atualiza o timestamp se houver mudança nas demandas
+
   // Obter data de hoje no fuso local no formato dd/mm/aaaa
   const getTodayString = () => {
     const today = new Date();
     const dd = String(today.getDate()).padStart(2, '0');
-    const mm = String(today.getMonth() + 1).padStart(2, '0'); // Janeiro é 0
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
     const yyyy = today.getFullYear();
     return `${dd}/${mm}/${yyyy}`;
   };
@@ -39,26 +61,80 @@ export const Header: React.FC<HeaderProps> = ({ userEmail, demandas, onLogout })
 
   return (
     <header className="header-container">
-      {/* Barra superior de título e conta */}
-      <div className="header-layout">
-        <div className="header-title-area">
-          <h1>Controle de Demandas</h1>
-          <p>RH — Secretaria Municipal de Educação (SME)</p>
+      {/* 1. Faixa Institucional Compacta (De ponta a ponta na janela) */}
+      <div className="institucional-bar">
+        <div className="inst-left">
+          <span className="inst-orgao">RH • Secretaria Municipal de Educação</span>
+          <span className="inst-separador">|</span>
+          <span className="inst-sub">Sistema interno de acompanhamento</span>
         </div>
         
-        <div className="header-actions">
-          <div className="user-badge">
-            <i className="fa-solid fa-user-circle fa-lg"></i>
+        <div className="inst-right">
+          {/* Usuário Logado */}
+          <div className="inst-meta-item inst-user">
+            <i className="fa-solid fa-user-circle"></i>
             <span>{userEmail}</span>
           </div>
-          <button className="btn" onClick={onLogout} title="Sair do sistema">
+
+          {/* Última Atualização */}
+          <div className="inst-meta-item inst-timestamp" title="Momento da última modificação de dados">
+            <i className="fa-solid fa-rotate"></i>
+            <span>Atualizado: {lastUpdate}</span>
+          </div>
+
+          {/* Badge de Ambiente */}
+          <div className="inst-badge-ambiente">
+            Ambiente Local (LocalStorage)
+          </div>
+
+          {/* Botão Sair */}
+          <button 
+            type="button"
+            className="btn-logout-link" 
+            onClick={onLogout} 
+            title="Sair do sistema"
+          >
             <i className="fa-solid fa-right-from-bracket"></i>
             <span>Sair</span>
           </button>
         </div>
       </div>
 
-      {/* Cards de Indicadores (Estilo Editorial com Frisos Coloridos) */}
+      {/* 2. Título Principal da Central de Demandas & Ações Globais */}
+      <div className="title-action-row">
+        <div className="title-area">
+          <h1>Central de Demandas</h1>
+          <p className="header-subtitle">
+            Acompanhamento de processos, expedientes, prazos e providências.
+          </p>
+        </div>
+        
+        <div className="header-global-actions">
+          {/* Ação Secundária: Exportar CSV */}
+          <button 
+            type="button"
+            className="btn btn-secondary-outline" 
+            onClick={onExportCSV}
+            title="Exportar dados filtrados como arquivo CSV"
+          >
+            <i className="fa-solid fa-download"></i>
+            <span>Exportar CSV</span>
+          </button>
+
+          {/* Ação Primária: Nova Demanda */}
+          <button 
+            type="button"
+            className="btn btn-primary btn-nova-demanda-header" 
+            onClick={onOpenNovo}
+            title="Cadastrar nova demanda"
+          >
+            <i className="fa-solid fa-plus"></i>
+            <span>Nova demanda</span>
+          </button>
+        </div>
+      </div>
+
+      {/* 3. Cards de Indicadores (Estilo Editorial com Frisos Coloridos) */}
       <div className="stats-grid">
         <div className="stat-card total-card">
           <div className="stat-info">
