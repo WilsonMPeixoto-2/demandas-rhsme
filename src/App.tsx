@@ -10,7 +10,7 @@ import { ModalStatus } from './components/ModalStatus';
 import { ModalHistorico } from './components/ModalHistorico';
 
 export const App: React.FC = () => {
-  // --- Estados de Autenticação ---
+  // --- Estados de Autenticação (Simulada para rapidez local) ---
   const [userEmail, setUserEmail] = useState<string>('');
   const [loginEmail, setLoginEmail] = useState<string>('');
   const [loginSenha, setLoginSenha] = useState<string>('');
@@ -62,7 +62,7 @@ export const App: React.FC = () => {
       setUserEmail(loggedUser);
     }
 
-    // Carregar demandas de LocalStorage ou usar inicial
+    // Carregar demandas de LocalStorage ou usar inicial da planilha demandas.xlsx
     const storedDemandas = localStorage.getItem('demandas_data');
     if (storedDemandas) {
       setDemandas(JSON.parse(storedDemandas));
@@ -71,10 +71,23 @@ export const App: React.FC = () => {
       localStorage.setItem('demandas_data', JSON.stringify(initialDemandas));
     }
 
-    // Carregar histórico de LocalStorage
+    // Carregar histórico de LocalStorage ou criar histórico inicial vazio
     const storedHistorico = localStorage.getItem('demandas_history');
     if (storedHistorico) {
       setHistorico(JSON.parse(storedHistorico));
+    } else {
+      // Cria registros de histórico iniciais de mentirinha para ilustrar o visual
+      const hojeStr = new Date().toLocaleString('pt-BR');
+      const mockHistorico: ComentarioHistorico[] = initialDemandas.map(d => ({
+        id: d.id,
+        demandaId: d.id,
+        data_hora: hojeStr,
+        status_novo: d.status,
+        setor: d.setor || 'SME',
+        comentario: 'Demanda importada da planilha inicial.'
+      }));
+      setHistorico(mockHistorico);
+      localStorage.setItem('demandas_history', JSON.stringify(mockHistorico));
     }
   }, []);
 
@@ -129,7 +142,7 @@ export const App: React.FC = () => {
       return;
     }
     
-    // Simula a autenticação
+    // Simula a autenticação com sucesso
     setUserEmail(loginEmail);
     localStorage.setItem('demandas_user', loginEmail);
   };
@@ -140,7 +153,7 @@ export const App: React.FC = () => {
     const isEmailValido = cadEmail.toLowerCase().endsWith('@rioeduca.net');
 
     if (isEmailValido && isSenhaForte) {
-      alert("Solicitação de acesso cadastrada com sucesso! Fique atento ao e-mail para aprovação.");
+      alert("Solicitação de acesso simulada com sucesso! Você já pode entrar com sua conta no formulário de login.");
       setLoginTab('login');
       setLoginEmail(cadEmail);
       setCadEmail('');
@@ -155,7 +168,7 @@ export const App: React.FC = () => {
     localStorage.removeItem('demandas_user');
   };
 
-  // --- Operações de Dados ---
+  // --- Operações de Dados Locais ---
   
   // Criar nova demanda
   const handleSalvarNovaDemanda = (novaDemanda: Omit<Demanda, 'id'>) => {
@@ -265,7 +278,6 @@ export const App: React.FC = () => {
 
     return demandas.filter(d => {
       // 1. Filtros Rápidos Cumulativos ("Hoje", "Vencido", "Para assinatura")
-      // Se pelo menos um dos botões cumulativos estiver ativo:
       const algunQuickAtivo = quickFilters.assinatura || quickFilters.hoje || quickFilters.vencido;
       
       if (algunQuickAtivo) {
