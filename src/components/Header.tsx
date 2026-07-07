@@ -206,7 +206,24 @@ export const Header: React.FC<HeaderProps> = ({
           title="Filtrar por demandas vencidas em atraso"
         >
           <div className="stat-info">
-            <h3>Vencidas</h3>
+            <h3>
+              Vencidas
+              {totalVencidos > 0 && (
+                <span 
+                  className="dot-vencidas-alert" 
+                  style={{
+                    display: 'inline-block',
+                    width: '6px',
+                    height: '6px',
+                    backgroundColor: '#ef4444',
+                    borderRadius: '50%',
+                    marginLeft: '6px',
+                    verticalAlign: 'middle'
+                  }}
+                  title="Há demandas vencidas que exigem atenção imediata"
+                />
+              )}
+            </h3>
             <div className="stat-number">{totalVencidos}</div>
           </div>
         </button>
