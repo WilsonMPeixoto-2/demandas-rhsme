@@ -568,6 +568,23 @@ export const App: React.FC = () => {
         onLogout={handleLogout} 
         onOpenNovo={() => setModalNovoAberto(true)}
         onExportCSV={handleExportCSV}
+        filtrosAtivos={{
+          status: filtros.status,
+          quickFilters
+        }}
+        onToggleFiltroStatus={(novoStatus) => {
+          setFiltros(prev => ({ ...prev, status: novoStatus }));
+          setQuickFilters({ assinatura: false, hoje: false, vencido: false });
+        }}
+        onToggleQuickFilter={(filtro) => {
+          setQuickFilters(prev => {
+            const novoVal = !prev[filtro];
+            return {
+              ...prev,
+              [filtro]: novoVal
+            };
+          });
+        }}
       />
 
       {/* Faixa de Atenção Imediata */}
@@ -587,6 +604,8 @@ export const App: React.FC = () => {
         quickFilters={quickFilters}
         setQuickFilters={setQuickFilters}
         setoresDisponiveis={setoresDisponiveis}
+        totalExibidos={demandasFiltradas.length}
+        totalGeral={demandas.length}
       />
 
       {/* Tabela de Demandas */}

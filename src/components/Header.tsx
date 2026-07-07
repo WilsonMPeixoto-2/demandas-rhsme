@@ -7,6 +7,16 @@ interface HeaderProps {
   onLogout: () => void;
   onOpenNovo: () => void;
   onExportCSV: () => void;
+  filtrosAtivos: {
+    status: string;
+    quickFilters: {
+      assinatura: boolean;
+      hoje: boolean;
+      vencido: boolean;
+    }
+  };
+  onToggleFiltroStatus: (status: string) => void;
+  onToggleQuickFilter: (filtro: 'assinatura' | 'hoje' | 'vencido') => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({ 
@@ -14,7 +24,10 @@ export const Header: React.FC<HeaderProps> = ({
   demandas, 
   onLogout,
   onOpenNovo,
-  onExportCSV
+  onExportCSV,
+  filtrosAtivos,
+  onToggleFiltroStatus,
+  onToggleQuickFilter
 }) => {
   const [lastUpdate, setLastUpdate] = useState<string>('');
 
@@ -58,6 +71,16 @@ export const Header: React.FC<HeaderProps> = ({
   const totalAssinatura = demandas.filter(d => d.status === 'Para Assinatura').length;
   const totalHoje = demandas.filter(d => d.status !== 'Encerrado' && d.limite2 === todayStr).length;
   const totalVencidos = demandas.filter(d => d.status !== 'Encerrado' && d.limite2 && isBeforeToday(d.limite2)).length;
+
+  // Determinar se algum filtro rápido está selecionado
+  const isQuickFiltroAtivo = filtrosAtivos.quickFilters.assinatura || filtrosAtivos.quickFilters.hoje || filtrosAtivos.quickFilters.vencido;
+  const isCardAtivosSelecionado = filtrosAtivos.status === 'Somente ativos (padrão)' && !isQuickFiltroAtivo;
+
+  // Legenda de Urgência
+  const totalCriticas = totalHoje + totalVencidos + totalAssinatura;
+  const legendaCriticas = totalCriticas > 0
+    ? `${totalCriticas} ${totalCriticas === 1 ? 'demanda exige' : 'demandas exigem'} providência imediata.`
+    : 'Todas as demandas de prazo crítico estão em dia.';
 
   return (
     <header className="header-container">
@@ -134,35 +157,65 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* 3. Cards de Indicadores (Estilo Editorial com Frisos Coloridos) */}
+      {/* 3. Cards de Indicadores (Estilo Editorial com Frisos Coloridos e Acionáveis) */}
       <div className="stats-grid">
-        <div className="stat-card total-card">
+        <button 
+          type="button" 
+          className={`stat-card total-card ${isCardAtivosSelecionado ? 'active' : ''}`}
+          onClick={() => {
+            // Se já estiver ativo, não faz nada (permanece em ativos padrão)
+            // Caso contrário, ativa o status de ativos e limpa os filtros rápidos
+            onToggleFiltroStatus('Somente ativos (padrão)');
+          }}
+          title="Exibir todas as demandas ativas"
+        >
           <div className="stat-info">
             <h3>Demandas Ativas</h3>
             <div className="stat-number">{totalAtivos}</div>
           </div>
-        </div>
+        </button>
 
-        <div className="stat-card assinatura-card">
+        <button 
+          type="button" 
+          className={`stat-card assinatura-card ${filtrosAtivos.quickFilters.assinatura ? 'active' : ''}`}
+          onClick={() => onToggleQuickFilter('assinatura')}
+          title="Filtrar por demandas aguardando assinatura"
+        >
           <div className="stat-info">
             <h3>Para Assinatura</h3>
             <div className="stat-number">{totalAssinatura}</div>
           </div>
-        </div>
+        </button>
 
-        <div className="stat-card hoje-card">
+        <button 
+          type="button" 
+          className={`stat-card hoje-card ${filtrosAtivos.quickFilters.hoje ? 'active' : ''}`}
+          onClick={() => onToggleQuickFilter('hoje')}
+          title="Filtrar por demandas que vencem hoje"
+        >
           <div className="stat-info">
             <h3>Vencendo Hoje</h3>
             <div className="stat-number">{totalHoje}</div>
           </div>
-        </div>
+        </button>
 
-        <div className="stat-card vencido-card">
+        <button 
+          type="button" 
+          className={`stat-card vencido-card ${filtrosAtivos.quickFilters.vencido ? 'active' : ''}`}
+          onClick={() => onToggleQuickFilter('vencido')}
+          title="Filtrar por demandas vencidas em atraso"
+        >
           <div className="stat-info">
             <h3>Vencidas</h3>
             <div className="stat-number">{totalVencidos}</div>
           </div>
-        </div>
+        </button>
+      </div>
+
+      {/* Legenda Dinâmica de Urgência */}
+      <div className="stats-legend">
+        <i className="fa-solid fa-circle-info"></i>
+        <span>{legendaCriticas}</span>
       </div>
     </header>
   );

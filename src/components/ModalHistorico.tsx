@@ -23,34 +23,49 @@ export const ModalHistorico: React.FC<ModalHistoricoProps> = ({ demanda, histori
         
         <div className="modal-body">
           {historicoFiltrado.length > 0 ? (
-            <div className="table-responsive" style={{ maxHeight: '350px' }}>
-              <table className="historico-table">
-                <thead>
-                  <tr>
-                    <th style={{ width: '25%' }}>Data/Hora</th>
-                    <th style={{ width: '20%' }}>Status</th>
-                    <th style={{ width: '15%' }}>Setor</th>
-                    <th style={{ width: '40%' }}>Comentário</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {historicoFiltrado.map(h => (
-                    <tr key={h.id}>
-                      <td style={{ textAlign: 'center' }}>{h.data_hora}</td>
-                      <td style={{ textAlign: 'center' }}>
-                        <span style={{ fontSize: '0.7rem', fontWeight: 600 }} className={`badge ${h.status_novo === 'Para Assinatura' ? 'assinatura' : h.status_novo === 'Encerrado' ? 'encerrado' : 'aguardando'}`}>
-                          {h.status_novo}
-                        </span>
-                      </td>
-                      <td style={{ textAlign: 'center' }}>{h.setor || '—'}</td>
-                      <td>{h.comentario}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div style={{ maxHeight: '420px', overflowY: 'auto', paddingRight: '5px' }}>
+              <div className="timeline-container">
+                {historicoFiltrado.map((h, index) => {
+                  // Determina classes de cor para a badge de status na timeline
+                  let statusBadgeClass = 'badge aguardando';
+                  if (h.status_novo === 'Para Assinatura') statusBadgeClass = 'badge assinatura';
+                  else if (h.status_novo === 'Encerrado') statusBadgeClass = 'badge encerrado';
+                  else if (h.status_novo === 'Tramitado') statusBadgeClass = 'badge tramitado';
+                  else if (h.status_novo === 'Ajustar') statusBadgeClass = 'badge ajustar';
+                  else if (h.status_novo === 'Sobrestado') statusBadgeClass = 'badge sobrestado';
+
+                  return (
+                    <div key={h.id} className={`timeline-item ${index === 0 ? 'latest' : ''}`}>
+                      <div className="timeline-circle"></div>
+                      <div className="timeline-content">
+                        <div className="timeline-header">
+                          <div className="timeline-meta">
+                            <i className="fa-regular fa-clock" style={{ marginRight: '6px' }}></i>
+                            {h.data_hora}
+                          </div>
+                          <span className={statusBadgeClass} style={{ fontSize: '0.688rem', fontWeight: 600 }}>
+                            {h.status_novo}
+                          </span>
+                        </div>
+                        
+                        <div>
+                          <span className="timeline-setor">
+                            <i className="fa-solid fa-building" style={{ marginRight: '4px', fontSize: '0.688rem' }}></i>
+                            {h.setor || 'CTRH'}
+                          </span>
+                        </div>
+                        
+                        <div className="timeline-comment">
+                          {h.comentario}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           ) : (
-            <div style={{ padding: '20px 0', color: 'var(--text-muted)', textAlign: 'center', fontSize: '0.875rem' }}>
+            <div style={{ padding: '30px 0', color: 'var(--text-muted)', textAlign: 'center', fontSize: '0.875rem' }}>
               Não há histórico de alterações de status registrado para esta demanda.
             </div>
           )}

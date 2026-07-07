@@ -24,9 +24,16 @@ export const DemandasTable: React.FC<DemandasTableProps> = ({
     const handleGlobalClick = () => {
       setActiveDropdownId(null);
     };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setActiveDropdownId(null);
+      }
+    };
     document.addEventListener('click', handleGlobalClick);
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.removeEventListener('click', handleGlobalClick);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 
@@ -179,13 +186,14 @@ export const DemandasTable: React.FC<DemandasTableProps> = ({
                     {/* Processo / Documento (Número, Tipo e Classificação consolidados) */}
                     <td style={{ textAlign: 'left' }}>
                       <div className="processo-identificacao">
-                        <span 
+                        <button 
+                          type="button"
                           className="numero-link" 
                           onClick={() => onOpenEditar(d)}
-                          title="Clique para editar este registro"
+                          title={`Clique para editar a demanda do processo nº ${d.numero}`}
                         >
                           {d.numero}
-                        </span>
+                        </button>
                         <div className="processo-metadados">
                           <span>{d.tipo}</span>
                           {d.classificacao && (
@@ -267,12 +275,15 @@ export const DemandasTable: React.FC<DemandasTableProps> = ({
                               setActiveDropdownId(activeDropdownId === d.id ? null : d.id);
                             }}
                             title="Mais ações"
+                            aria-expanded={activeDropdownId === d.id}
+                            aria-haspopup="menu"
+                            aria-controls={`menu-acoes-${d.id}`}
                           >
                             <i className="fa-solid fa-ellipsis-vertical"></i>
                           </button>
                           
                           {activeDropdownId === d.id && (
-                            <div className="dropdown-menu">
+                            <div className="dropdown-menu" id={`menu-acoes-${d.id}`} role="menu">
                               <button 
                                 type="button" 
                                 className="dropdown-item"
